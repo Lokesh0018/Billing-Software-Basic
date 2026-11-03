@@ -1,0 +1,328 @@
+@import 'tailwindcss';
+
+/*
+ * TiffinFlow design system ("soft pill" style)
+ *
+ * Soft sage-grey ground, a black icon rail, white cards with large radii, pill buttons and tabs.
+ * Ink and primary actions: near-black. Highlight and data accent: lime.
+ * Blue is reserved for keyboard focus. Status colours only for status.
+ * (Token names "brand" = ink scale and "saffron" = accent scale are kept so every screen follows.)
+ */
+@theme {
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Ink: text, primary buttons, selected states */
+  --color-brand-50: #f4f5f2;
+  --color-brand-100: #e9ebe6;
+  --color-brand-200: #d5d8d1;
+  --color-brand-300: #aeb2aa;
+  --color-brand-400: #868a82;
+  --color-brand-500: #62665f;
+  --color-brand-600: #474a44;
+  --color-brand-700: #33362f;
+  --color-brand-800: #22241f;
+  --color-brand-900: #141513;
+  --color-brand-950: #0b0c0a;
+
+  /* Lime accent: highlight cards, the main data series. 600/700 are dark enough for text. */
+  --color-saffron-50: #f8fbe4;
+  --color-saffron-100: #f0f7c4;
+  --color-saffron-200: #e5f381;
+  --color-saffron-400: #d8ec57;
+  --color-saffron-500: #cbe43c;
+  --color-saffron-600: #7f951a;
+  --color-saffron-700: #56660e;
+
+  /* Neutral greys (replace Tailwind's blue-tinted slate everywhere). 500+ pass 4.5:1 on white. */
+  --color-slate-50: #f7f8f6;
+  --color-slate-100: #eff0ed;
+  --color-slate-200: #e2e4df;
+  --color-slate-300: #cdd0c9;
+  --color-slate-400: #9ea29a;
+  --color-slate-500: #6a6e66;
+  --color-slate-600: #575b54;
+  --color-slate-700: #3f423c;
+  --color-slate-800: #2a2c27;
+  --color-slate-900: #181a16;
+
+  /* Shell */
+  --color-frame: #e9ebe7;
+  --color-sheet: #e9ebe7;
+  --color-line: #e3e5e0;
+  --color-rule: #eef0ec;
+  --color-raised: #f4f5f2;
+  --color-focus: #2563eb;
+
+  --radius-sheet: 0px;
+  --radius-card: 28px;
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-frame text-brand-900 antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  ::selection {
+    @apply bg-saffron-100 text-brand-900;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer components {
+  /* Numbers line up in tables, totals and KPIs. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .input {
+    @apply block h-10 w-full rounded-[14px] border border-line bg-white px-3.5 text-sm text-brand-900 transition-colors
+      placeholder:text-slate-500 hover:border-slate-300
+      focus:border-focus focus:ring-3 focus:ring-focus/15 focus:outline-none
+      disabled:bg-raised disabled:text-slate-500;
+  }
+  textarea.input {
+    @apply h-auto py-2.5;
+  }
+  select.input {
+    @apply pr-8;
+  }
+  .label {
+    @apply mb-2 block text-sm font-medium text-brand-900;
+  }
+
+  /* A white card on the soft ground: large radius, no border, no shadow. */
+  .card {
+    @apply rounded-[28px] bg-white;
+  }
+
+  /* Data tables: rules and alignment, grey sentence-case headers, no bands. */
+  .data-table {
+    @apply w-full text-sm;
+  }
+  .data-table thead th {
+    @apply h-10 border-b border-line px-4 text-left text-xs font-medium whitespace-nowrap text-slate-500;
+  }
+  .data-table tbody td {
+    @apply h-12 border-b border-rule px-4;
+  }
+  .data-table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+  .data-table tbody tr {
+    @apply transition-colors hover:bg-raised;
+  }
+  .data-table .num {
+    @apply text-right tabular-nums;
+  }
+}
+
+/*
+ * Motion is feedback, and content never depends on it: if an animation never runs (a frozen
+ * timeline, a hidden window) every element is still visible and in place. Content therefore only
+ * moves a few pixels or scales slightly; only backdrops fade from transparent.
+ * Page content: no transform at all, because a transform would become the containing block for the
+ * pages' position:fixed bars (the phone cart bar).
+ */
+@keyframes tf-page-in {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.page-enter {
+  animation: tf-page-in 220ms ease-out backwards;
+}
+
+@keyframes tf-pop {
+  from {
+    transform: scale(0.96);
+  }
+  to {
+    transform: none;
+  }
+}
+.pop-in {
+  animation: tf-pop 180ms var(--ease-out-quint) backwards;
+}
+
+@keyframes tf-rise {
+  from {
+    transform: translateY(4px);
+  }
+  to {
+    transform: none;
+  }
+}
+.rise-in {
+  animation: tf-rise 200ms var(--ease-out-quint) backwards;
+}
+
+/* Backdrops only. */
+@keyframes tf-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.fade-in {
+  animation: tf-fade 160ms ease-out backwards;
+}
+
+@keyframes tf-sheet-up {
+  from {
+    transform: translateY(32px);
+  }
+  to {
+    transform: none;
+  }
+}
+.sheet-up {
+  animation: tf-sheet-up 240ms var(--ease-out-quint) backwards;
+}
+
+@keyframes tf-slide-in {
+  from {
+    transform: translateX(-32px);
+  }
+  to {
+    transform: none;
+  }
+}
+.slide-in {
+  animation: tf-slide-in 220ms var(--ease-out-quint) backwards;
+}
+
+/* Dialogs rise as a bottom sheet on phones and pop in on larger screens. */
+.modal-panel {
+  animation: tf-sheet-up 240ms var(--ease-out-quint) backwards;
+}
+@media (min-width: 640px) {
+  .modal-panel {
+    animation: tf-pop 180ms var(--ease-out-quint) backwards;
+  }
+}
+
+/* Loading placeholders: flat grey at the real size, a slow breath instead of a shimmer. */
+@keyframes tf-breathe {
+  50% {
+    opacity: 0.55;
+  }
+}
+.skeleton {
+  @apply rounded-md bg-slate-200/70;
+  animation: tf-breathe 1.6s ease-in-out infinite;
+}
+
+/* Payment success: card pops, badge springs, one pulse, tick draws, text settles, timer runs down. */
+@keyframes tf-badge {
+  from {
+    transform: scale(0.5);
+  }
+  60% {
+    transform: scale(1.08);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes tf-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+@keyframes tf-draw {
+  from {
+    stroke-dashoffset: 60;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes tf-timer {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+.success-card {
+  animation: tf-pop 220ms var(--ease-out-quint) backwards;
+}
+.success-badge {
+  animation: tf-badge 520ms var(--ease-out-quint) 80ms backwards;
+}
+.success-pulse {
+  opacity: 0;
+  animation: tf-pulse 900ms ease-out 380ms backwards;
+}
+.success-tick {
+  stroke-dasharray: 60;
+  animation: tf-draw 380ms ease-out 360ms backwards;
+}
+.success-text {
+  animation: tf-rise 320ms var(--ease-out-quint) 480ms backwards;
+}
+.success-timer {
+  animation-name: tf-timer;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .success-card,
+  .success-badge,
+  .success-tick,
+  .success-text {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+  .success-pulse {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter,
+  .pop-in,
+  .fade-in,
+  .sheet-up,
+  .slide-in,
+  .modal-panel,
+  .rise-in {
+    animation-duration: 1ms;
+  }
+  .skeleton {
+    animation: none;
+  }
+}
+
+/* Thin scrollbars inside scroll panes */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #cfd5df transparent;
+}
